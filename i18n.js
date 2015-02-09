@@ -1,22 +1,22 @@
 /**
+ * @author  Adapted for Parse by Michael Kamphausen <michael.kamphausen@apploft.de>
  * @author  John Resig <jeresig@gmail.com>
  * @author  Originally by Marcus Spiegel <marcus.spiegel@gmail.com>
- * @link    https://github.com/jeresig/i18n-node
+ * @link    https://github.com/apploft/parse-i18n
  * @license http://opensource.org/licenses/MIT
  *
- * @version 0.4.6
+ * @version 0.5.0
  */
 
 // dependencies
 var vsprintf = require("sprintf").vsprintf,
-	fs = require("fs"),
 	path = require("path");
 
 var i18n = module.exports = function(opt) {
 	var self = this;
 
-	// Put into dev or production mode
-	this.devMode = process.env.NODE_ENV !== "production";
+	// Put into dev mode as default
+	this.devMode = false;
 
 	// Copy over options
 	for (var prop in opt) {
@@ -63,7 +63,7 @@ var i18n = module.exports = function(opt) {
 	}
 };
 
-i18n.version = "0.4.6";
+i18n.version = "0.5.0";
 
 i18n.localeCache = {};
 i18n.resMethods = ["__", "__n", "getLocale", "isPreferredLocale"];
@@ -109,7 +109,7 @@ i18n.registerMethods = function(helpers, req) {
 i18n.prototype = {
 	defaultLocale: "en",
 	extension: ".js",
-	directory: "./locales",
+	directory: "cloud/locales",
 	cookieName: "lang",
 
 	__: function() {
@@ -238,8 +238,12 @@ i18n.prototype = {
 		return prefLocale || this.defaultLocale;
 	},
 
-	// read locale file, translate a msg and write to fs if new
+	// read locale file and translate a msg
 	translate: function(locale, singular, plural) {
+		if (singular == undefined) {
+		  return "";
+		}
+		
 		if (!locale || !this.locales[locale]) {
 			if (this.devMode) {
 				console.warn("WARN: No locale found. Using the default (" +
@@ -252,15 +256,16 @@ i18n.prototype = {
 		}
 
 		if (!this.locales[locale][singular]) {
+			if (this.devMode) {
+				console.warn("WARN: Key '" + singular + "' not found in locale " + locale + 
+				  ". Using the key as translation.");
+			}
+			
 			this.locales[locale][singular] = plural ?
 				{ one: singular, other: plural } :
 				singular;
-
-			if (this.devMode) {
-				this.writeFile(locale);
-			}
 		}
-
+		
 		return this.locales[locale][singular];
 	},
 
@@ -274,67 +279,19 @@ i18n.prototype = {
 		}
 
 		try {
-			var localeFile = fs.readFileSync(file);
+			var localeFile = require(file);
 
 			try {
 				// parsing filecontents to locales[locale]
-				this.initLocale(locale, JSON.parse(localeFile));
+				this.initLocale(locale, localeFile);
 
 			} catch (e) {
 				console.error('unable to parse locales from file (maybe ' + file +
-					' is empty or invalid json?): ', e);
+					' is empty or invalid json?): ' + e.message);
 			}
 
 		} catch (e) {
-			// unable to read, so intialize that file
-			// locales[locale] are already set in memory, so no extra read required
-			// or locales[locale] are empty, which initializes an empty locale.json file
-			this.writeFile(locale);
-		}
-	},
-
-	// try writing a file in a created directory
-	writeFile: function(locale) {
-		// don't write new locale information to disk if we're not in dev mode
-		if (!this.devMode) {
-			// Initialize the locale if didn't exist already
-			this.initLocale(locale, {});
-		}
-
-		// creating directory if necessary
-		try {
-			fs.lstatSync(this.directory);
-
-		} catch (e) {
-			if (this.devMode) {
-				console.log('creating locales dir in: ' + this.directory);
-			}
-
-			fs.mkdirSync(this.directory, 0755);
-		}
-
-		// Initialize the locale if didn't exist already
-		this.initLocale(locale, {});
-
-		// writing to tmp and rename on success
-		try {
-			var target = this.locateFile(locale),
-				tmp = target + ".tmp";
-
-			fs.writeFileSync(tmp, JSON.stringify(
-				this.locales[locale], null, "\t"), "utf8");
-
-			if (fs.statSync(tmp).isFile()) {
-				fs.renameSync(tmp, target);
-
-			} else {
-				console.error('unable to write locales to file (either ' + tmp +
-					' or ' + target + ' are not writeable?): ');
-			}
-
-		} catch (e) {
-			console.error('unexpected error writing files (either ' + tmp +
-				' or ' + target + ' are not writeable?): ', e);
+			console.error("unable to read file " + file + ": " + e.message);
 		}
 	},
 

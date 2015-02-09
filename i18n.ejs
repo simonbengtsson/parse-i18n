@@ -1,0 +1,13 @@
+<script src="/admin/js/sprintf.min.js"></script>
+<script type="text/javascript">
+  var i18n = {
+    "devMode": <%= i18n.devMode %>,
+    "locales": {"<%= i18n.locale %>": <%- JSON.stringify(i18n.locales[i18n.locale]) %>},
+    "locale": "<%= i18n.locale %>",
+    "defaultLocale": "<%= i18n.locale %>",
+ <% ["__", "__n", "getLocale", "translate"].forEach(function(functionName) { %>
+    "<%= functionName %>": <%- i18n[functionName] %>,
+ <% }); %>
+    "initLocale": function() {}
+  };
+</script>
