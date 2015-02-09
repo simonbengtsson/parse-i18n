@@ -20,6 +20,10 @@ This is a fork of John Resig's [i18n-2](https://github.com/jeresig/i18n-node-2) 
 
 Copy _i18n.js_ to a location of your choice inside the _cloud_ directory, for example _cloud/i18n-parse/i18n.js_.
 
+Copy a _sprintf.js_ implementation like [sprintf.js](https://github.com/alexei/sprintf.js) to the same directory as _i18n.js_ or a location of your choice inside the _cloud_ directory.
+
+In case you have placed _i18n.js_ or _sprintf.js_ in a different directory than _cloud/i18n-parse/_, you will have to adjust the path to require sprintf in _i18n.js_.
+
 ### <a name="load-configure"></a>Load and Configure with Express.js
 
 In the file where you instantiate and setup your Express.js app, require that _i18n.js_ file and attach the i18n functionality to the request object inside Express.js like so:
