@@ -12,9 +12,9 @@ This is a fork of John Resig's [i18n-2](https://github.com/jeresig/i18n-node-2) 
 
  * new strings cannot be added on-the-fly to the language json files because there is no write access to local files
  * changed the default directory for locales to _cloud/locales_
- * the language files must have a .js extension and the file content needs to be prefixed with `module.exports = ` (see [Installation](#installation))
+ * the language files must have a .js extension and the file content needs to be prefixed with `module.exports = ` (see [Setup Language Files](#setup-language-files)
  * `devMode` cannot be automatically determined from NODE_ENV, so the default value is true
- * optional feature: you can access the translation methods from your frontend JavaScipt by including _i18n.ejs_ in your view templates, see [Installation](#installation)
+ * optional feature: you can access the translation methods from your frontend JavaScipt by including _i18n.ejs_ in your view templates, see [Inside Your Frontend JavaScript](#inside-frontend-js)
 
 ## <a name="installation"></a>Installation
 
@@ -120,7 +120,7 @@ That file can be edited or just uploaded to [webtranslateit](http://docs.webtran
 	<p><%= desc %></p>
 	<% include footer %>
 	
-### Inside Your Frontend JavaScript
+### <a name="inside-frontend-js"></a>Inside Your Frontend JavaScript
 
 In case you want to access the i18n translation methods from your frontend JavaScript code, you should copy _i18n.ejs_ to your _views_ directory. Include it in your appropriate EJS template file with `<% include i18n %>`, typically near the closing body tag and before you load your JavaScript code that references the i18n methods. You can use it like this:
 
