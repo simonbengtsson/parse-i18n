@@ -1,0 +1,13 @@
+{
+  "name": "parse-i18n",
+  "version": "0.5.0",
+  "license": "MIT",
+  "description": "Lightweight simple translation module for parse.com with json storage",
+  "main": "i18n-node.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "sprintf-js": "^1.0.3"
+  }
+}

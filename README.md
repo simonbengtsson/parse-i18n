@@ -18,15 +18,31 @@ This is a fork of John Resig's [i18n-2](https://github.com/jeresig/i18n-node-2) 
 
 ## <a name="installation"></a>Installation
 
-Copy _i18n.js_ to a location of your choice inside the _cloud_ directory, for example _cloud/i18n-parse/i18n.js_.
+## <a name="installation"></a>Installation
 
-Copy a _sprintf.js_ implementation like [sprintf.js](https://github.com/alexei/sprintf.js) to the same directory as _i18n.js_ or a location of your choice inside the _cloud_ directory.
+To learn more about the i18n configuration options like `locales`, see chapter [Configuration](#configuration).
 
-In case you have placed _i18n.js_ or _sprintf.js_ in a different directory than _cloud/i18n-parse/_, you will have to adjust the path to require sprintf in _i18n.js_.
+### Setup for Parse Server
+- Install the library with `npm install apploft/parse-i18n --save`
+- Load and configure with express.js
 
-### <a name="load-configure"></a>Load and Configure with Express.js
+```js
+var express = require('express'),
+  app = express(),
+  I18n = require('i18n-parse');
 
-In the file where you instantiate and setup your Express.js app, require that _i18n.js_ file and attach the i18n functionality to the request object inside Express.js like so:
+I18n.expressBind(app, {
+  "locales": ["en", "fr", "de"]
+});
+```
+
+### Setup native Parse way (deprecated since parse is shutting down)
+- Copy `i18n.js` to a location of your choice inside the `cloud` directory, for example `cloud/i18n-parse/i18n.js`
+- Copy a `sprintf.js` implementation like [sprintf.js](https://github.com/alexei/sprintf.js) to the same directory as `i18n.js` or a location of your choice inside the `cloud` directory
+- In case you have placed `i18n.js` or `sprintf.js` in a different directory than `cloud/i18n-parse/`, you will have to adjust the path to require sprintf in `i18n.js`.
+- Load and configure with Express.js
+
+In the file where you instantiate and setup your Express.js app, require that `i18n.js` file and attach the i18n functionality to the request object inside Express.js like so:
 
 	var express = require('express'),
 	  app = express(),
@@ -35,10 +51,6 @@ In the file where you instantiate and setup your Express.js app, require that _i
 	I18n.expressBind(app, {
 	  "locales": ["en", "fr", "de"]
 	});
-	
-	// Set up the rest of the Express middleware
-
-To learn more about the i18n configuration options like `locales`, see chapter [Configuration](#configuration).
 
 ### <a name="setup-language-files"></a>Setup Language Files
 
